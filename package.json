@@ -1,0 +1,11 @@
+{
+  "name": "fd-talk-show",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node backend/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "mongoose": "^9.11.2"
+  }
+}
