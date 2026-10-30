@@ -72,3 +72,53 @@ contactForm.addEventListener("submit", async function (event) {
         sendBtn.disabled = false;
     }
 });
+
+// Auth UI (login/signup state)
+(function () {
+    const user = (function () {
+        try {
+            return JSON.parse(localStorage.getItem("fdUser"));
+        } catch (e) {
+            return null;
+        }
+    })();
+
+    const nav = document.querySelector("nav");
+    if (!nav) return;
+
+    if (user && user.name) {
+        const greeting = document.createElement("span");
+        greeting.textContent = "Hi, " + user.name;
+        greeting.style.cssText = "color:#a91b61;font-weight:bold;padding:8px 12px;";
+        nav.appendChild(greeting);
+
+        const logout = document.createElement("a");
+        logout.href = "#";
+        logout.textContent = "Logout";
+        logout.addEventListener("click", function (e) {
+            e.preventDefault();
+            localStorage.removeItem("fdUser");
+            window.location.reload();
+        });
+        nav.appendChild(logout);
+    }
+})();
+
+
+// Live Survey Results Sync (MongoDB Atlas)
+(async function syncSurveyResults() {
+    try {
+        const response = await fetch("http://localhost:3000/api/survey-results");
+        if (!response.ok) return;
+        const result = await response.json();
+        if (result && result.status === "success" && result.data) {
+            console.log("Survey data synced from MongoDB:", result.source, "Total:", result.totalResponses);
+            const totalStat = document.querySelector(".survey-stat-number");
+            if (totalStat && result.totalResponses) {
+                totalStat.textContent = result.totalResponses;
+            }
+        }
+    } catch (e) {
+        // Fallback: Static analysis in HTML is already pre-rendered
+    }
+})();
